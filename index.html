@@ -49,6 +49,7 @@
 
     <script>
         $(document).ready(function () {
+            new_j = 0
             Highcharts.getJSON('Testing_Col_Chart_2.json', function (data) {
 
                 // split the data set into ohlc and volume
@@ -100,9 +101,17 @@
                             ITM_CE_ltp_helper.push(ITM_CE_ltp[i][j])
                         }
                         else if (j == 1) {
-                            if (i != 0) {
+                            if (i != 0 && i >= new_j) {
                                 if (ITM_CE_ltp[i][j] == 0) {
-                                    ITM_CE_ltp_helper.push(ITM_CE_ltp[i - 1][j])
+                                    temp = i
+                                    for (var a = (i - 1); a < i; a--) {
+                                        if (ITM_CE_ltp[a][j] != 0) {
+                                            i = a
+                                            a = ITM_CE_ltp.length
+                                        }
+                                    }
+                                    ITM_CE_ltp_helper.push(ITM_CE_ltp[i][j])
+                                    i = temp
                                 }
                                 else {
                                     ITM_CE_ltp_helper.push(ITM_CE_ltp[i][j])
@@ -110,11 +119,24 @@
                             }
                             else if (i == 0) {
                                 if (ITM_CE_ltp[i][j] == 0) {
-                                    ITM_CE_ltp_helper.push(ITM_CE_ltp[i + 1][j])
+                                    temp_1 = i
+                                    for (var a = (i + 1); a < ITM_CE_ltp.length; a++) {
+                                        if (ITM_CE_ltp[a][j] != 0) {
+                                            i = a
+                                            new_j = i
+                                            console.log("1st NON ZERO POSITION : ", i)
+                                            a = ITM_CE_ltp.length
+                                        }
+                                    }
+                                    ITM_CE_ltp_helper.push(ITM_CE_ltp[i][j])
+                                    i = temp_1
                                 }
                                 else {
                                     ITM_CE_ltp_helper.push(ITM_CE_ltp[i][j])
                                 }
+                            }
+                            else if (i < new_j) {
+                                ITM_CE_ltp_helper.push(ITM_CE_ltp[new_j][j])
                             }
                         }
                     }
@@ -128,37 +150,42 @@
                             ITM_PE_ltp_helper.push(ITM_PE_ltp[i][j])
                         }
                         else if (j == 1) {
-                            if (i != 0) {
+                            if (i != 0 && i >= new_j) {
                                 if (ITM_PE_ltp[i][j] == 0) {
-                                    // temp = i
-                                    // for (var a = (i - 1); a < i; a) {
-                                    //     if (ITM_PE_ltp[a][j] != 0) {
-                                    //         i = a
-                                    //         a = ITM_PE_ltp.length
-                                    //     }
-                                    // }
-                                    ITM_PE_ltp_helper.push(ITM_PE_ltp[i - 1][j])
-                                    // i = temp
+                                    temp = i
+                                    for (var a = (i - 1); a < i; a--) {
+                                        if (ITM_PE_ltp[a][j] != 0) {
+                                            i = a
+                                            a = ITM_PE_ltp.length
+                                        }
+                                    }
+                                    ITM_PE_ltp_helper.push(ITM_PE_ltp[i][j])
+                                    i = temp
                                 }
                                 else {
                                     ITM_PE_ltp_helper.push(ITM_PE_ltp[i][j])
                                 }
-
                             }
                             else if (i == 0) {
                                 if (ITM_PE_ltp[i][j] == 0) {
-                                    // temp_1 = i
-                                    // for (var a = (i + 1); a < ITM_PE_ltp.length; a++) {
-                                    //     if (ITM_PE_ltp[a][j] != 0) {
-                                    //         i = a
-                                    //         a = ITM_PE_ltp.length
-                                    //     }
-                                    // }
-                                    ITM_PE_ltp_helper.push(ITM_PE_ltp[i + 1][j])
+                                    temp_1 = i
+                                    for (var a = (i + 1); a < ITM_PE_ltp.length; a++) {
+                                        if (ITM_PE_ltp[a][j] != 0) {
+                                            i = a
+                                            new_j = i
+                                            console.log("1st NON ZERO POSITION : ", i)
+                                            a = ITM_PE_ltp.length
+                                        }
+                                    }
+                                    ITM_PE_ltp_helper.push(ITM_PE_ltp[i][j])
+                                    i = temp_1
                                 }
                                 else {
                                     ITM_PE_ltp_helper.push(ITM_PE_ltp[i][j])
                                 }
+                            }
+                            else if (i < new_j) {
+                                ITM_PE_ltp_helper.push(ITM_PE_ltp[new_j][j])
                             }
                         }
                     }
@@ -285,14 +312,14 @@
                     ],
                     tooltip: {
                         enabled: true,
-                        positioner: function (labelWidth, labelHeight, point) {
-                            var tooltipX = ($(document).width() / 2) - 250;
-                            var tooltipY = point.plotY - 40;
-                            return {
-                                x: tooltipX,
-                                y: tooltipY
-                            };
-                        },
+                        // positioner: function (labelWidth, labelHeight, point) {
+                        //     var tooltipX = ($(document).width() / 2) - 250;
+                        //     var tooltipY = point.plotY - 40;
+                        //     return {
+                        //         x: tooltipX,
+                        //         y: tooltipY
+                        //     };
+                        // },
                         backgroundColor: '#1c1c1c',
                         borderColor: '#1c1c1c',
                         borderWidth: 0,
@@ -301,8 +328,16 @@
                         },
                         split: true,
                         formatter: function () {
-                            tooltipArray = ['<b>' + moment.unix(this.x).format('h:mm:ss a') + '</b>&nbsp;&nbsp;' + '<b>TO_diff:</b>&nbsp;' + this.points[0].y + '<b>&nbsp;&nbsp;TO_diff_2:</b>&nbsp;' + this.points[1].y + '&nbsp;&nbsp;<b>ITM_CE_ltp:</b>&nbsp;' + this.points[2].y + '&nbsp;&nbsp;<b>ITM_PE_ltp:</b>&nbsp;' + this.points[3].y]
-                            return tooltipArray;
+                            tooltipArray = ['<b>' + moment.unix(this.x).format('h:mm:ss a') + '</b>&nbsp;&nbsp;' + '<b>TO_diff:</b>&nbsp;' + this.points[0].y + '<b>&nbsp;&nbsp;TO_diff_2:</b>&nbsp;' + this.points[1].y
+                                // + '&nbsp;&nbsp;<b>ITM_CE_ltp:</b>&nbsp;' + this.points[2].y + '&nbsp;&nbsp;<b>ITM_PE_ltp:</b>&nbsp;' + this.points[3].y
+                            ]
+                            // tooltipArray.push('&nbsp;&nbsp;<b>ITM_CE_ltp:</b>&nbsp;' + this.points[2].y)
+                            // tooltipArray.push('&nbsp;&nbsp;<b>ITM_PE_ltp:</b>&nbsp;' + this.points[3].y)
+                            tooltip_1 = ['&nbsp;&nbsp;<b>ITM_CE_ltp:</b>&nbsp;' + this.points[2].y]
+                            tooltip_2 = ['&nbsp;&nbsp;<b>ITM_PE_ltp:</b>&nbsp;' + this.points[3].y]
+                            tooltip_3 =[]
+                            tooltip_4 = []
+                            return [tooltipArray, tooltip_3, tooltip_4, tooltip_1, tooltip_2]
                         }
                     },
                     xAxis: {
@@ -314,7 +349,7 @@
                         }
                     },
                     series: [
-                    {
+                        {
                             type: 'column',
                             name: 'TO_diff',
                             color: 'rgb(255, 108, 108)',
@@ -325,7 +360,7 @@
                             dataGrouping: {
                                 enabled: false,
                             }
-                        }, 
+                        },
                         {
                             type: 'column',
                             name: 'TO_diff_2',
